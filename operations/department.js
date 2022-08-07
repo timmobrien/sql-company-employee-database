@@ -2,21 +2,24 @@
 
 const { connect } = require("../db/connection")
 
-// add department
 
+// Accepts name and queries to add new department
 async function addDepartment(name) {
+
     const db = await connect();
 
     await db.query('INSERT INTO `company_db`.`departments` (`name`) VALUES (?)', name);
     
 }
 
+// Gets the current list of departments and returns it
 async function getDepartments() {
     const db = await connect();
     const [departments] = await db.query('SELECT * FROM departments');
     return departments;
 }
 
+// Export the functions for use in main file
 module.exports = {
     addDepartment,
     getDepartments

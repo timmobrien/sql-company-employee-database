@@ -1,10 +1,11 @@
+// Importing files & packages
+
 const inquirer = require("inquirer");
-const { connect } = require("./db/connection");
 const { getDepartments, addDepartment } = require("./operations/department");
-const { addEmployee, getEmployees, updateEmployee } = require("./operations/employee");
+const { addEmployee, getEmployees, updateEmployee} = require("./operations/employee");
 const { getRoles, addRole } = require("./operations/role");
 
-
+// Main function with initial prompts
 function main() {
   inquirer
     .prompt([
@@ -14,8 +15,9 @@ function main() {
         name: "operations",
         choices: [
           "View all departments",
-          "Add department",
           "View all roles",
+          "View all employees",
+          "Add department",
           "Add a role",
           "Add an employee",
           "Edit an employee",
@@ -23,14 +25,25 @@ function main() {
         ],
       },
     ])
+    // Case for each answer
     .then(async (ans) => {
       switch (ans.operations) {
         case "View all departments":
-          const departments = await getDepartments();
-          console.table(departments);
+          // Calls the function to get specified data & display it in a table
+          console.table(await getDepartments());
           main();
           break;
-
+        
+        case "View all employees":
+          console.table(await getEmployees());
+          main();
+          break;
+        
+        case "View all roles":
+          console.table(await getRoles());
+          main();
+          break;
+        // Calls functions with further prompts
         case "Add department":
           newDepartment();
           break;
@@ -39,26 +52,22 @@ function main() {
           newEmployee();
           break;
 
-        case "View all roles":
-          const roles = await getRoles();
-          console.table(roles);
-          main();
-          break;
 
         case "Add a role":
           newRole();
           break;
-          
+
         case "Edit an employee":
           editEmployee();
           break;
-        
+
         case "Exit application":
           process.exit(0);
       }
     });
 }
 
+// Prompts to create a new department
 function newDepartment() {
   inquirer
     .prompt([
@@ -68,6 +77,7 @@ function newDepartment() {
         name: "department_name",
       },
     ])
+    // Once the inputs are complete, call the add department function & pass the necessary data
     .then(async (ans) => {
       await addDepartment(ans.department_name);
       console.table(await getDepartments());
@@ -75,71 +85,75 @@ function newDepartment() {
     });
 }
 
+// Prompts to create new role 
 async function newRole() {
-
+  // Get the departments data to choose from
   const departmentsData = await getDepartments();
-  
+  // Array that inquirer will use for listing
   const departmentChoices = [];
-
-  departmentsData.forEach(dep => {
+  // For each item in the departments array, create an object that inquirer will accept
+  departmentsData.forEach((dep) => {
     let qObj = {
       name: dep.name,
-      value: dep.id
-    }
-    departmentChoices.push(qObj)
-  })
+      value: dep.id,
+    };
+    // Push each object into the choices array
+    departmentChoices.push(qObj);
+  });
 
   inquirer
     .prompt([
       {
-        message: 'What is the title of the role?',
-        type:'input',
-        name:'title',
+        message: "What is the title of the role?",
+        type: "input",
+        name: "title",
       },
       {
-        message:"What is the salary associated with the role?",
-        type: 'number',
-        name: 'salary',
+        message: "What is the salary associated with the role?",
+        type: "number",
+        name: "salary",
       },
       {
-        message: 'Which department does the role belong to?',
-        type: 'list',
+        message: "Which department does the role belong to?",
+        type: "list",
         choices: departmentChoices,
-        name:'department_id',
-      }
+        name: "department_id",
+      },
     ])
-    .then (async (ans)=>{
+    // Then pass the inputs to the addRole function, and display the updated role table
+    .then(async (ans) => {
       await addRole(ans.title, ans.salary, ans.department_id);
       console.table(await getRoles());
       main();
-    })
+    });
 }
 
+// Function to add a new employee
 async function newEmployee() {
 
-  // Get a list of roles to choose from
+  // Get list of roles & make inquirer choices array
   const roles = await getRoles();
+  const roleChoices = [];
 
-  const roleChoices = []
-
-  roles.forEach(role => {
+  roles.forEach((role) => {
     let qObj = {
       name: role.title,
-      value: role.id
-    }
-    roleChoices.push(qObj)
-  })
+      value: role.id,
+    };
+    roleChoices.push(qObj);
+  });
 
+  // Current employee list so that a manager can be chosen
   const employees = await getEmployees();
-  const managerChoices = []
+  const managerChoices = [];
 
-  employees.forEach(emp => {
+  employees.forEach((emp) => {
     let qObj = {
-      name: emp.first_name +" "+emp.last_name,
-      value: emp.id
-    }
-    managerChoices.push(qObj)
-  })
+      name: emp.first_name + " " + emp.last_name,
+      value: emp.id,
+    };
+    managerChoices.push(qObj);
+  });
 
   inquirer
     .prompt([
@@ -151,16 +165,16 @@ async function newEmployee() {
       {
         message: "Last name: ",
         type: "input",
-        name:"last_name"
+        name: "last_name",
       },
       {
         message: "Role: ",
         type: "list",
-        name:"role_id",
-        choices: roleChoices
+        name: "role_id",
+        choices: roleChoices,
       },
       {
-        message: 'Does this employee have a manager?',
+        message: "Does this employee have a manager?",
         type: "confirm",
         name: "manager",
       },
@@ -169,41 +183,48 @@ async function newEmployee() {
         type: "list",
         name: "manager_id",
         choices: managerChoices,
-        when: (ans) => ans.manager
-      }
+        when: (ans) => ans.manager,
+      },
     ])
+    // Pass all the data to the add employee function & display the updated table
     .then(async (ans) => {
-      await addEmployee(ans.first_name, ans.last_name, ans.role_id, ans.manager_id);
+      await addEmployee(
+        ans.first_name,
+        ans.last_name,
+        ans.role_id,
+        ans.manager_id
+      );
       console.table(await getEmployees());
       main();
-  });
+    });
 }
 
+// Prompts to edit employees
+async function editEmployee() {
 
-async function editEmployee () {
-
+  // Get & format list of employees for choices
   const employees = await getEmployees();
-  const employeeChoices = []
+  const employeeChoices = [];
 
-  employees.forEach(emp => {
+  employees.forEach((emp) => {
     let qObj = {
-      name: emp.first_name +" "+emp.last_name,
-      value: emp.id
-    }
-    employeeChoices.push(qObj)
-  })
+      name: emp.first_name + " " + emp.last_name,
+      value: emp.id,
+    };
+    employeeChoices.push(qObj);
+  });
 
+  // Get roles & format for when user wants to change employee roles
   const roles = await getRoles();
-  const roleChoices = []
+  const roleChoices = [];
 
-  roles.forEach(role => {
+  roles.forEach((role) => {
     let qObj = {
       name: role.title,
-      value: role.id
-    }
-    roleChoices.push(qObj)
-  })
-
+      value: role.id,
+    };
+    roleChoices.push(qObj);
+  });
 
   inquirer
     .prompt([
@@ -211,50 +232,55 @@ async function editEmployee () {
         message: "Which employee would you like to edit?",
         name: "employee_id",
         type: "list",
-        choices: employeeChoices
+        choices: employeeChoices,
       },
       {
         message: "What would you like to edit?",
         type: "list",
-        choices: [
-          "Name",
-          "Manager",
-          "Role",
-        ],
+        choices: ["Name", "Manager", "Role"],
         name: "update_choice",
       },
       {
         message: "First name: ",
         type: "input",
         name: "first_name",
-        when: (ans) => ans.update_choice === "Name"
+        when: (ans) => ans.update_choice === "Name",
       },
       {
         message: "Last name: ",
         type: "input",
         name: "last_name",
-        when: (ans) => ans.update_choice === "Name"
+        when: (ans) => ans.update_choice === "Name",
       },
       {
         message: "New role: ",
         type: "list",
         name: "role_id",
         choices: roleChoices,
-        when: (ans) => ans.update_choice === "Role"
+        when: (ans) => ans.update_choice === "Role",
       },
       {
         message: "New manager: ",
         type: "list",
         name: "manager_id",
         choices: employeeChoices,
-        when: (ans) => ans.update_choice === "Manager"
-      }, 
-  ]).then (async (ans)=> {
-    await updateEmployee(ans.first_name, ans.last_name, ans.role_id, ans.manager_id, ans.employee_id)
-    console.table(await getEmployees())
-    main();
-  })
+        when: (ans) => ans.update_choice === "Manager",
+      },
+    ])
+    // Then pass all answers to the update function
+    // Any undefined criteria that the user did not update will be ignored by the function
+    .then(async (ans) => {
+      await updateEmployee(
+        ans.first_name,
+        ans.last_name,
+        ans.role_id,
+        ans.manager_id,
+        ans.employee_id
+      );
+      console.table(await getEmployees());
+      main();
+    });
 }
 
-
+// Run main function
 main();
