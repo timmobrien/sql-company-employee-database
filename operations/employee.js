@@ -44,9 +44,20 @@ async function updateEmployee(firstName, lastName, roleID, managerID, employeeID
   if (managerID) { await db.query(managerQueryString, managerChangeParam) };
 }
 
+// Delete employee by ID
+async function deleteEmployee(employeeID) {
+
+  const db = await connect();
+
+  const deleteQuery = "DELETE FROM `company_db`.`employees` WHERE id = ?";
+
+  await db.query(deleteQuery, employeeID)
+}
+
 // Export functions for use in main file
 module.exports = {
   getEmployees,
   addEmployee,
   updateEmployee,
+  deleteEmployee
 };

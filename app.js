@@ -1,9 +1,9 @@
 // Importing files & packages
 
 const inquirer = require("inquirer");
-const { getDepartments, addDepartment } = require("./operations/department");
-const { addEmployee, getEmployees, updateEmployee} = require("./operations/employee");
-const { getRoles, addRole } = require("./operations/role");
+const { getDepartments, addDepartment, deleteDepartment } = require("./operations/department");
+const { addEmployee, getEmployees, updateEmployee, deleteEmployee} = require("./operations/employee");
+const { getRoles, addRole, deleteRole } = require("./operations/role");
 
 // Main function with initial prompts
 function main() {
@@ -21,6 +21,7 @@ function main() {
           "Add a role",
           "Add an employee",
           "Edit an employee",
+          "Delete an entry",
           "Exit application",
         ],
       },
@@ -60,7 +61,9 @@ function main() {
         case "Edit an employee":
           editEmployee();
           break;
-
+        case "Delete an entry":
+          deleteEntry();
+          break;
         case "Exit application":
           process.exit(0);
       }
@@ -281,6 +284,122 @@ async function editEmployee() {
       main();
     });
 }
+
+async function deleteEntry() {
+  inquirer
+    .prompt([
+      {
+        message: "What would you like to delete?",
+        type: "list",
+        name: "delete_choice",
+        choices: [
+          "Employee",
+          "Role",
+          "Department",
+        ]
+      }
+    ])
+    .then (async (ans) => {
+      switch (ans.delete_choice) {
+        case "Employee":
+          removeEmployee();
+          break;
+        case "Role":
+          removeRole();
+          break;
+        case "Department":
+          removeDepartment();
+          break;
+      }
+    })
+}
+
+async function removeEmployee() {
+  const employees = await getEmployees();
+  const employeeChoices = [];
+
+
+  employees.forEach((emp) => {
+    let qObj = {
+      name: emp.first_name + " " + emp.last_name,
+      value: emp.id,
+    };
+    employeeChoices.push(qObj);
+  });
+
+  inquirer
+    .prompt([
+      {
+        message: "Which employee would you like to delete?",
+        type: "list",
+        name: "employee_id",
+        choices: employeeChoices
+      }
+    ]).then(async (ans) => {
+      await deleteEmployee(ans.employee_id);
+      console.table(await getEmployees());
+      main();
+    })
+}
+
+
+async function removeDepartment() {
+  const departments = await getDepartments();
+  const departmentChoices = [];
+
+
+  departments.forEach((dep) => {
+    let qObj = {
+      name: dep.name ,
+      value: dep.id,
+    };
+    departmentChoices.push(qObj);
+  });
+
+  inquirer
+    .prompt([
+      {
+        message: "Which department would you like to delete?",
+        type: "list",
+        name: "department_id",
+        choices: departmentChoices
+      }
+    ]).then(async (ans) => {
+      await deleteDepartment(ans.department_id);
+      console.table(await getDepartments());
+      main();
+    })
+}
+
+async function removeRole() {
+  const roles = await getRoles();
+  const roleChoices = [];
+
+
+  roles.forEach((role) => {
+    let qObj = {
+      name: role.title ,
+      value: role.id,
+    };
+    roleChoices.push(qObj);
+  });
+
+  inquirer
+    .prompt([
+      {
+        message: "Which role would you like to delete?",
+        type: "list",
+        name: "role_id",
+        choices: roleChoices
+      }
+    ]).then(async (ans) => {
+      await deleteRole(ans.role_id);
+      console.table(await getRoles());
+      main();
+    })
+}
+
+
 
 // Run main function
 main();

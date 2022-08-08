@@ -19,8 +19,19 @@ async function getDepartments() {
     return departments;
 }
 
+// Delete department
+async function deleteDepartment(departmentID) {
+
+    const db = await connect();
+  
+    const deleteQuery = "DELETE FROM `company_db`.`departments` WHERE id = ?";
+  
+    await db.query(deleteQuery, departmentID);
+}
+
 // Export the functions for use in main file
 module.exports = {
     addDepartment,
-    getDepartments
+    getDepartments,
+    deleteDepartment
 }

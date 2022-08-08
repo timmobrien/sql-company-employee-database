@@ -21,5 +21,15 @@ async function addRole(title, salary, department_id) {
   );
 }
 
+// Delete a role
+async function deleteRole(roleID) {
+
+  const db = await connect();
+
+  const deleteQuery = "DELETE FROM `company_db`.`roles` WHERE id = ?";
+
+  await db.query(deleteQuery, roleID);
+}
+
 // Export functions for use in main file
-module.exports = { addRole, getRoles };
+module.exports = { addRole, getRoles , deleteRole };
