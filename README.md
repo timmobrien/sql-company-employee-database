@@ -20,16 +20,21 @@ GitHub URL: [https://github.com/timmobrien/sql-company-employee-database](https:
 
 3. [Installation](#installation)
 
-4. [Usage](#usage)
+4. [Demo](#demo)
 
-5. [License](#license)
+5. [Usage](#usage)
 
-6. [Tests](#tests)
+6. [License](#license)
 
-7. [Questions](#questions)
+7. [Tests](#tests)
+
+8. [Questions](#questions)
 
 ## Installation <a name="installation"></a>
 Clone the repo to your machine using `git@github.com:/timmobrien/sql-company-employee-database` <br> Then run `$ npm install` <br> Finally, navigate to the DB folder & after logging into mysql, enter `source schema.sql` <br> If you wish to enter seed data, navigate to the root directory and run `npm run seed`.  
+
+## Demo <a name="demo"></a>
+
 
 ## Usage <a name="usage"></a>
 Navigate to the root folder and run the following command <br> `node app.js` <br> You will be given a list of options to choose from, and upon selecting one you will be asked to input the necessary information.
