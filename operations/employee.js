@@ -20,15 +20,14 @@ async function addEmployee(firstName, lastName, roleID, managerID) {
 }
 
 // Function to update existing employee
-async function updateEmployee(firstName, lastName, roleID, managerID, EmployeeID) {
+async function updateEmployee(firstName, lastName, roleID, managerID, employeeID) {
 
   const db = await connect();
 
   // Input array for each potential change
-  const nameChangeParam = [firstName, lastName, EmployeeID];
-  const roleChangeParam = [roleID, EmployeeID];
-  const managerChangeParam = [managerID, EmployeeID];
-  console.log(nameChangeParam);
+  const nameChangeParam = [firstName, lastName, employeeID];
+  const roleChangeParam = [roleID, employeeID];
+  const managerChangeParam = [managerID, employeeID];
 
   // Query input variables for clean if statements
   const nameQueryString ="UPDATE employees SET `first_name` = ?, `last_name` = ? WHERE id = ?";
