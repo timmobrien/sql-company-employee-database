@@ -35,6 +35,8 @@ Clone the repo to your machine using `git@github.com:/timmobrien/sql-company-emp
 
 ## Demo <a name="demo"></a>
 
+https://user-images.githubusercontent.com/20904553/183347453-2092d063-2526-4333-987b-6c0ea2652e41.mp4
+
 
 ## Usage <a name="usage"></a>
 Navigate to the root folder and run the following command <br> `node app.js` <br> You will be given a list of options to choose from, and upon selecting one you will be asked to input the necessary information.
