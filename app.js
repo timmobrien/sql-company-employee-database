@@ -4,6 +4,7 @@ const inquirer = require("inquirer");
 const { getDepartments, addDepartment, deleteDepartment } = require("./operations/department");
 const { addEmployee, getEmployees, updateEmployee, deleteEmployee} = require("./operations/employee");
 const { getRoles, addRole, deleteRole } = require("./operations/role");
+const cTable = require('console.table')
 
 // Main function with initial prompts
 function main() {
