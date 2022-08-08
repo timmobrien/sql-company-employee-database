@@ -35,7 +35,7 @@ Clone the repo to your machine using `git@github.com:/timmobrien/sql-company-emp
 
 ## Demo <a name="demo"></a>
 
-https://user-images.githubusercontent.com/20904553/183347453-2092d063-2526-4333-987b-6c0ea2652e41.mp4
+https://user-images.githubusercontent.com/20904553/183348975-7622c8e4-ea34-47bb-863a-440e74e816aa.mp4
 
 
 ## Usage <a name="usage"></a>
